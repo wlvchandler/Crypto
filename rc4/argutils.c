@@ -1,18 +1,19 @@
+#include "argutils.h"
 
-char* parse_argv_to_str(int argc, char** argv)
+char* parse_argv_to_str(int* argc, char** argv)
 {
 
 	char* ret;
-	int size = argc-1;
+	int size = *argc-1;
 
 	int i;
-	for (i = 1; i < argc; i++)
+	for (i = 1; i < *argc; i++)
 		size += strlen(argv[i]);
 
 	ret = malloc(size + 1);
 
 	int k = 0;
-	for (i = 1; i < argc; i++)
+	for (i = 1; i < *argc; i++)
 	{
 		unsigned j = 0;
 		unsigned _arglen = strlen(argv[i]);
@@ -24,6 +25,8 @@ char* parse_argv_to_str(int argc, char** argv)
 	}
 
 	ret[--k] = 0;
+
+	*argc = i;
 
 	return ret;
 }
@@ -76,6 +79,9 @@ struct arg_struct parse_args(int argc, char** argv)
 			case 'M':
 				printf("");
 				ret.iFile = argv[++i];
+				break;
+			case 'm':
+				ret.iFile = parse_argv_to_str(&argc, argv);
 				break;
 			case 'O':
 				ret.oFile = argv[++i];
