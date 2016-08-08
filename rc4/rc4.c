@@ -2,6 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+struct arg_struct 
+{
+	FILE * ifile = NULL;
+	FILE * ofile = NULL;
+};
+
+
 static inline void swap (int* x, int* y)
 {
 	*x ^= *y;
@@ -45,8 +53,49 @@ char* parse_argv_to_str(int argc, char** argv)
 */
 
 
+void parse_argv(int argc, char** argv)
+{
+	if (argc == 1) //not enough arguments
+	{
+		printf("Failed to provide a message\n");
+		return -1;
+	} 
+	else //parse arguments 
+	{
+
+		enum {IN, OUT};
+
+		unsigned i; for (i = 0; i < argc; ++i)
+		{
+			int option;
+			if (argv[i][0] == '-')
+			{
+				switch (argv[i][1])
+				{
+					case 'i':
+						option = IN;
+						break;
+					case 'o':
+						option = OUT;
+						break;
+					default:
+						//bad option
+						break;
+				}
+
+				char* 
+
+			} else {
+
+			}
+		}
+	}
+
+}
+
+
 /*TODO - more secure way to get file size*/
-static char* parse_argv(const char* filename)
+static char* parse_argv_files(const char* filename)
 {
 	FILE* fp = fopen(filename, "rb");
 
@@ -135,11 +184,6 @@ void RC4encrypt(const char* message, const char* key)
 int main(int argc, char** argv)
 {
 
-	if (argc == 1)
-	{
-		printf("Failed to provide a key\n");
-		return -1;
-	}
 
 	char * key = parse_argv(argc,argv);
 
