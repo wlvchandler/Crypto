@@ -11,10 +11,9 @@ static inline void swap (int* x, int* y)
 
 
 /*
-	Parse command line arguments into one string
-	Made to take key or message from command line
-*/
-/*
+% Parse command line arguments into one string
+% Made to take key or message from command line
+
 char* parse_argv_to_str(int argc, char** argv)
 {
 
@@ -44,6 +43,23 @@ char* parse_argv_to_str(int argc, char** argv)
 	return ret;
 }
 */
+
+
+/*TODO - more secure way to get file size*/
+static char* parse_argv(const char* filename)
+{
+	FILE* fp = fopen(filename, "rb");
+
+	/*get file size, not secure*/
+	fseek(fp, 0, SEEK_END);
+	size_t filesize = ftell(fp);
+	rewind(fp);
+
+	char* contents = malloc (filesize * sizeof(char));
+	fread(content, sizeof(char), filesize, fp);
+	fclose(fp);
+	return 
+}
 
 
 /*Convert key string into an array of decimal ASCII identifiers*/
