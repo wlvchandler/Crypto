@@ -12,3 +12,5 @@ rc4.o: rc4.c
 argutils.o: argutils.c
 	$(CC) $(CFLAGS) argutils.c
 
+clean:
+	rm *o rc4
