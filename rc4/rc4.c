@@ -55,10 +55,13 @@ static char* parse_argv(const char* filename)
 	size_t filesize = ftell(fp);
 	rewind(fp);
 
-	char* contents = malloc (filesize * sizeof(char));
-	fread(content, sizeof(char), filesize, fp);
+	char* contents = malloc (filesize+1);
+	fread(contents, sizeof(char), filesize, fp);
+	contents[filesize] = 0;
+
 	fclose(fp);
-	return 
+
+	return contents;
 }
 
 
