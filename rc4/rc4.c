@@ -10,7 +10,12 @@ static inline void swap (int* x, int* y)
 } 
 
 
-char* parse_argv(int argc, char** argv)
+/*
+	Parse command line arguments into one string
+	Made to take key or message from command line
+*/
+/*
+char* parse_argv_to_str(int argc, char** argv)
 {
 
 	char* ret;
@@ -32,16 +37,19 @@ char* parse_argv(int argc, char** argv)
 			ret[k++] = argv[i][j++];
 
 		ret[k++] = ' ';
-		ret[k] = 0;
 	}
+
+	ret[--k] = 0;
 
 	return ret;
 }
+*/
 
 
-static int * convert_key(const char * key, unsigned len)
+/*Convert key string into an array of decimal ASCII identifiers*/
+static unsigned short * convert_key(const char * key, unsigned len)
 {
-	 int * ret = malloc(sizeof(int) * len);
+	 unsigned short * ret = malloc(sizeof(int) * len);
 
 	 unsigned i; for ( i = 0; i < len; ++i )
 	 {
@@ -58,7 +66,7 @@ void _ksa(int S[256], const char* key)
 	int i, j = 0;
 	unsigned keylen = strlen(key);
 
-	int * keynums = convert_key(key, keylen);
+	unsigned short * keynums = convert_key(key, keylen);
 
 	for (i = 0; i < 256; ++i)
 		S[i] = i;
@@ -107,6 +115,13 @@ void RC4encrypt(const char* message, const char* key)
 
 int main(int argc, char** argv)
 {
+
+	if (argc == 1)
+	{
+		printf("Failed to provide a key\n");
+		return -1;
+	}
+
 	char * key = parse_argv(argc,argv);
 
 	RC4encrypt("This message is encrypted", key);
