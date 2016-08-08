@@ -11,5 +11,8 @@ struct arg_struct
 };
 
 
-
 extern char* parse_argv_to_str(int argc, char** argv);
+
+extern char* parse_file(const char* filename);
+
+extern struct arg_struct parse_args(int argc, char** argv);
