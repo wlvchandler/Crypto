@@ -5,8 +5,9 @@
 
 struct arg_struct 
 {
-	FILE * ifile = NULL;
-	FILE * ofile = NULL;
+	char * ifile = NULL;
+	char * ofile = NULL;
+	int fail = 0;
 };
 
 
@@ -53,49 +54,47 @@ char* parse_argv_to_str(int argc, char** argv)
 */
 
 
-void parse_argv(int argc, char** argv)
+struct arg_struct parse_args(int argc, char** argv)
 {
+
 	if (argc == 1) //not enough arguments
 	{
 		printf("Failed to provide a message\n");
 		return -1;
 	} 
-	else //parse arguments 
+
+	struct arg_struct ret;
+
+	unsigned i; for (i = 0; i < argc; ++i)
 	{
-
-		enum {IN, OUT};
-
-		unsigned i; for (i = 0; i < argc; ++i)
+		if (argv[i][0] != '-') 
 		{
-			int option;
-			if (argv[i][0] == '-')
-			{
-				switch (argv[i][1])
-				{
-					case 'i':
-						option = IN;
-						break;
-					case 'o':
-						option = OUT;
-						break;
-					default:
-						//bad option
-						break;
-				}
+			ret.fail = 1;
+			return ret;
+		}
 
-				char* 
-
-			} else {
-
-			}
+		switch (argv[i][1])
+		{
+			case 'I':
+				ret.iFile = argv[++i];
+				break;
+			case 'O':
+				ret.oFile = argv[++i];
+				break;
+			default:
+				printf("Argument %d invalid, exiting...\n", i);
+				ret.fail = 1;
+				return ret;
 		}
 	}
+
+	return ret;
 
 }
 
 
 /*TODO - more secure way to get file size*/
-static char* parse_argv_files(const char* filename)
+static char* parse_files(const char* filename)
 {
 	FILE* fp = fopen(filename, "rb");
 
@@ -184,6 +183,10 @@ void RC4encrypt(const char* message, const char* key)
 int main(int argc, char** argv)
 {
 
+	struct arg_struct args = parse_args(argc, argv);
+
+	if (args.fail) return -1;
+	
 
 	char * key = parse_argv(argc,argv);
 
