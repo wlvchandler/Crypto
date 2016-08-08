@@ -7,6 +7,7 @@ struct arg_struct
 {
 	char * ifile = NULL;
 	char * ofile = NULL;
+	char * key   = NULL;
 	int fail = 0;
 };
 
@@ -81,6 +82,9 @@ struct arg_struct parse_args(int argc, char** argv)
 			case 'O':
 				ret.oFile = argv[++i];
 				break;
+			case 'K':
+				ret.key = argv[++i];
+				break;
 			default:
 				printf("Argument %d invalid, exiting...\n", i);
 				ret.fail = 1;
@@ -94,7 +98,7 @@ struct arg_struct parse_args(int argc, char** argv)
 
 
 /*TODO - more secure way to get file size*/
-static char* parse_files(const char* filename)
+static char* parse_file(const char* filename)
 {
 	FILE* fp = fopen(filename, "rb");
 
@@ -163,20 +167,18 @@ int _prga(int S[256])
 }
 
 
-void RC4encrypt(const char* message, const char* key)
+void RC4encrypt(const char* message, const char* key, FILE* outFile)
 {
 	int p_array[256] = {0};
 
 	_ksa(p_array, key);
 
-	printf("%s\n", message);
-
 	unsigned i; for (i = 0; i < strlen(message); ++i)
 	{
-		printf("%02X", message[i] ^ _prga(p_array));
+		fprintf(outFile, "%02X", message[i] ^ _prga(p_array));
 	}
 
-	printf("\n");
+	fprintf(outFile, "\n");
 }
 
 
@@ -186,13 +188,54 @@ int main(int argc, char** argv)
 	struct arg_struct args = parse_args(argc, argv);
 
 	if (args.fail) return -1;
-	
 
-	char * key = parse_argv(argc,argv);
+	char * key;
+	char * message;
+	char * outFile;
 
-	RC4encrypt("This message is encrypted", key);
 
+//Get key
+	if (args.key)	{
+		if (strstr(args.key, ".key") != NULL)
+			key = parse_file(args.key);
+		else
+			key = args.key;
+	} else 	{
+		printf("No key provided (use `-K` option). Exiting...\n");
+		return -2;
+	}
+
+//Get message
+	if (args.iFile) {
+		if (strstr(args.iFile, ".txt") != NULL)
+			message = parse_file(args.iFile);
+		else
+			message = args.iFile;
+	} else {
+		printf("No Message (use `-I` option to provide text or a file). Exiting...\n");
+		return -3;
+	}
+
+//Output file name
+	outFile = args.oFile == NULL ? "out" : args.oFile;
+	FILE * ofp = fopen(outFile, "w");
+
+	if (ofp == NULL)
+	{ 
+		printf("Failed to open output file. Exiting..."); 
+		return -4; 
+	}
+
+
+//Perform encryption
+	RC4encrypt(message, key, ofp);
+
+
+//Release pointers if necessary 
 	free(key);
+	free(message);
+	fclose(ofp);
 
 	return 0;
+	
 }
