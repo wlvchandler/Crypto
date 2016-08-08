@@ -5,10 +5,10 @@
 
 struct arg_struct 
 {
-	char * ifile = NULL;
-	char * ofile = NULL;
-	char * key   = NULL;
-	int fail = 0;
+	char * iFile;
+	char * oFile;
+	char * key;
+	int fail;
 };
 
 
@@ -58,15 +58,16 @@ char* parse_argv_to_str(int argc, char** argv)
 struct arg_struct parse_args(int argc, char** argv)
 {
 
+	struct arg_struct ret = {NULL, NULL, NULL, 0};
+
 	if (argc == 1) //not enough arguments
 	{
 		printf("Failed to provide a message\n");
-		return -1;
+		ret.fail = 1;
+		return ret;
 	} 
 
-	struct arg_struct ret;
-
-	unsigned i; for (i = 0; i < argc; ++i)
+	int i; for (i = 0; i < argc; ++i)
 	{
 		if (argv[i][0] != '-') 
 		{
@@ -76,7 +77,8 @@ struct arg_struct parse_args(int argc, char** argv)
 
 		switch (argv[i][1])
 		{
-			case 'I':
+			case 'M':
+				printf("");
 				ret.iFile = argv[++i];
 				break;
 			case 'O':
@@ -201,9 +203,10 @@ int main(int argc, char** argv)
 		else
 			key = args.key;
 	} else 	{
-		printf("No key provided (use `-K` option). Exiting...\n");
+		printf("No key provided (use `-K` option to provide text or a .key file). Exiting...\n");
 		return -2;
 	}
+
 
 //Get message
 	if (args.iFile) {
@@ -212,9 +215,10 @@ int main(int argc, char** argv)
 		else
 			message = args.iFile;
 	} else {
-		printf("No Message (use `-I` option to provide text or a file). Exiting...\n");
+		printf("No Message (use `-M` option to provide text or a .txt file). Exiting...\n");
 		return -3;
 	}
+
 
 //Output file name
 	outFile = args.oFile == NULL ? "out" : args.oFile;
