@@ -8,7 +8,7 @@ My own implementations of some various cryptographic functions and ciphers. Setu
   - GCC (tested): `$ gcc -std=c99 -o rc4 -Wall -Wextra -pedantic argutils.c rc4.c`
   
 ##Running the cipher
-  - `$ rc4 [-options]`
+  - `$ rc4 -m message -k key [-o outputFile]`
   - Required:
     - `-m`: Message on which to use cipher. Can be:
       - a filename, like `-m messageToEncrypt.txt`. So far only supports .txt format.
