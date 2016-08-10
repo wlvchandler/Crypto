@@ -94,9 +94,7 @@ int main(int argc, char** argv)
 
     if (args.fail) return -1;
 
-    char * key;
-    char * message;
-    char * outFile;
+    char *key, *message, *outFile;
 
 
 //Get key
@@ -110,8 +108,6 @@ int main(int argc, char** argv)
         return -2;
     }
 
-    printf("In main: got key:\t%s\n", key);
-
 //Get message
     if (args.iFile) {
         if (strstr(args.iFile, ".txt") != NULL)
@@ -124,13 +120,8 @@ int main(int argc, char** argv)
     }
 
 
-    printf("In main: got message:\t%s\n", message);
-
-
 //Output file name
     outFile = args.oFile == NULL ? "out" : args.oFile;
-
-    printf("In main: output to:\t%s\n", outFile);
 
     FILE * ofp = fopen(outFile, "w");
 
@@ -143,7 +134,6 @@ int main(int argc, char** argv)
 
 //Perform encryption
     RC4encrypt(message, key, ofp);
-
 
 //Release pointers if necessary 
     free(key);
