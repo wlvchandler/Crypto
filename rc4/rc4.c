@@ -101,7 +101,7 @@ int main(int argc, char** argv)
 
 //Get key
     if (args.key)   {
-        if (strstr(args.key, ".key") != NULL)
+        if (strstr(args.key, ".key") != NULL || strstr(args.key, ".txt") != NULL)
             key = parse_file(args.key);
         else
             key = args.key;
