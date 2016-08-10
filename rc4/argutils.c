@@ -7,19 +7,19 @@ char* parse_argv_to_str(int* cidx, int argc, char** argv)
     int size = argc-1;
 
     int i;
-    for (i = 1; i < argc; i++)
+    for (i = *cidx; i < argc && argv[i][0] != '-'; i++)
         size += strlen(argv[i]);
 
     ret = malloc(size + 1);
 
     int k = 0;
-    for (i = 1; i < argc; i++)
+    for (; *cidx < i; (*cidx)++)
     {
         unsigned j = 0;
-        unsigned _arglen = strlen(argv[i]);
+        unsigned _arglen = strlen(argv[*cidx]);
 
         while (j < _arglen)
-           ret[k++] = argv[i][j++];
+           ret[k++] = argv[*cidx][j++];
 
         ret[k++] = ' ';
     }
@@ -67,8 +67,6 @@ struct arg_struct parse_args(int argc, char** argv)
     int i; for (i = 1; i < argc; ++i)
     {
 
-        printf("Parsing args: argv[%d] = %s\n", i, argv[i]);
-
         if (argv[i][0] != '-') 
         {
             printf("Need switch `-*, exiting.\n`");
@@ -78,22 +76,19 @@ struct arg_struct parse_args(int argc, char** argv)
 
         switch (argv[i][1])
         {
-            case 'M':
-                ret.iFile = argv[++i];
-                printf("Option is -M, filename: %s\n", ret.iFile);
-                break;
-            case 'm':
+            case 'm':   //message (.txt file or cl arg)
+                i++;
                 ret.iFile = parse_argv_to_str(&i, argc, argv);
-                printf("Option is -m, message: %s\n", ret.iFile);
+                --i;
                 break;
-            case 'O':
+            case 'o':   //output file destination
                 ret.oFile = argv[++i];
-                printf("Option is -O, filename: %s\n", ret.oFile);
                 break;
-            case 'K':
-                ret.key = argv[++i];
-                printf("Option is -K, key: %s\n", ret.key);
-                break;
+            case 'k':   //key (.key/.txt file or cl arg)
+                i++;
+                ret.key = parse_argv_to_str(&i, argc, argv);
+                --i;
+                break;                
             default:
                 printf("Argument %d invalid, exiting...\n", i);
                 ret.fail = 1;
