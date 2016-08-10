@@ -3,8 +3,8 @@
 * compile with makefile or: 
 *           $ gcc -std=c99 -o rc4 -Wall -Wextra -pedantic argutils.c rc4.c
 * 
-* example execution:
-*           $ rc4 -K mykey -M test.txt
+* example execution using key `mykey`, plaintext file `test.txt`, and ciphertext file `testout.txt`:
+*           $ rc4 -K mykey -M test.txt -O testout.txt
 */
 
 #include "argutils.h"
