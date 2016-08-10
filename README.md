@@ -1,2 +1,4 @@
-# Crypto
-random crypto stuff
+# Implementations of cryptographic functions and ciphers
+
+# RC4:
+
