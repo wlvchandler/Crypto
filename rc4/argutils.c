@@ -26,8 +26,6 @@ char* parse_argv_to_str(int* cidx, int argc, char** argv)
 
 	ret[--k] = 0;
 
-	*argc = i;
-
 	return ret;
 }
 

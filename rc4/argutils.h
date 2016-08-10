@@ -12,7 +12,7 @@ struct arg_struct
 };
 
 
-extern char* parse_argv_to_str(int* argc, char** argv);
+extern char* parse_argv_to_str(int* cidx, int argc, char** argv);
 
 extern char* parse_file(const char* filename);
 
