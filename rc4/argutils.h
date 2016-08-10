@@ -5,10 +5,10 @@
 
 struct arg_struct 
 {
-	char * iFile;
-	char * oFile;
-	char * key;
-	int fail;
+    char * iFile;
+    char * oFile;
+    char * key;
+    int fail;
 };
 
 
