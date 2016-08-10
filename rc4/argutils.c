@@ -1,19 +1,19 @@
 #include "argutils.h"
 
-char* parse_argv_to_str(int* argc, char** argv)
+char* parse_argv_to_str(int* cidx, int argc, char** argv)
 {
 
 	char* ret;
-	int size = *argc-1;
+	int size = argc-1;
 
 	int i;
-	for (i = 1; i < *argc; i++)
+	for (i = 1; i < argc; i++)
 		size += strlen(argv[i]);
 
 	ret = malloc(size + 1);
 
 	int k = 0;
-	for (i = 1; i < *argc; i++)
+	for (i = 1; i < argc; i++)
 	{
 		unsigned j = 0;
 		unsigned _arglen = strlen(argv[i]);
@@ -66,10 +66,14 @@ struct arg_struct parse_args(int argc, char** argv)
 		return ret;
 	} 
 
-	int i; for (i = 0; i < argc; ++i)
+	int i; for (i = 1; i < argc; ++i)
 	{
+
+		printf("Parsing args: argv[%d] = %s\n", i, argv[i]);
+
 		if (argv[i][0] != '-') 
 		{
+            printf("Need switch `-*, exiting.\n`");
 			ret.fail = 1;
 			return ret;
 		}
@@ -77,17 +81,20 @@ struct arg_struct parse_args(int argc, char** argv)
 		switch (argv[i][1])
 		{
 			case 'M':
-				printf("");
 				ret.iFile = argv[++i];
+				printf("Option is -M, filename: %s\n", ret.iFile);
 				break;
 			case 'm':
-				ret.iFile = parse_argv_to_str(&argc, argv);
+				ret.iFile = parse_argv_to_str(&i, argc, argv);
+				printf("Option is -m, message: %s\n", ret.iFile);
 				break;
 			case 'O':
 				ret.oFile = argv[++i];
+				printf("Option is -O, filename: %s\n", ret.oFile);
 				break;
 			case 'K':
 				ret.key = argv[++i];
+				printf("Option is -K, key: %s\n", ret.key);
 				break;
 			default:
 				printf("Argument %d invalid, exiting...\n", i);
