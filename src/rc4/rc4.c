@@ -2,31 +2,14 @@
 #include "include/crypto.h"
 
 
-void encrypt(const char* message, const char* key, FILE* outFile)
+void __rc4(const char* message, const char* key, FILE* out, bool encrypt)
 {
-    char* encrypted = rc4_encrypt(message, key);
+    char* _crypt = encrypt ? rc4_encrypt(message, key) : rc4_decrypt(message, key);
 
-    if (outFile)
-        fprintf(outFile, "%s", encrypted);
-    else
-        printf("%s", encrypted);
+    fprintf(out, "%s", _crypt);
 
-    free(encrypted);
+    free(_crypt);
 }
-
-void decrypt(const char* message, const char* key, FILE* outFile)
-{
-    char* decrypted = rc4_decrypt(message, key);
-
-    if (outFile)
-        fprintf(outFile, "%s", decrypted);
-    else
-        printf("%s", decrypted);
-
-    free(decrypted);
-}
-
-
 
 int main(int argc, char** argv)
 {
@@ -72,14 +55,14 @@ int main(int argc, char** argv)
             return -4; 
         }
 
-    } else ofp = NULL;
+    } else ofp = stdout;
 
 
     //Use cipher
     if (args.encrypt)
-        encrypt(message, key, ofp);
+        __rc4(message, key, ofp, true);
     else
-        decrypt(message, key, ofp);
+        __rc4(message, key, ofp, false);
 
 
     //Release pointers if necessary
