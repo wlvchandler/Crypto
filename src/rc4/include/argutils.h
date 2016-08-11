@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 
 struct arg_struct 
@@ -8,7 +9,8 @@ struct arg_struct
     char * iFile;
     char * oFile;
     char * key;
-    int fail;
+    bool fail;
+    bool encrypt;
 };
 
 

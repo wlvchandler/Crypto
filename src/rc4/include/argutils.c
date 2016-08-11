@@ -70,7 +70,7 @@ struct arg_struct parse_args(int argc, char** argv)
         if (argv[i][0] != '-') 
         {
             printf("Need switch `-*, exiting.\n`");
-    		ret.fail = 1;
+    		ret.fail = true;
     		return ret;
         }
 
@@ -91,7 +91,7 @@ struct arg_struct parse_args(int argc, char** argv)
                 break;                
             default:
                 printf("Argument %d invalid, exiting...\n", i);
-                ret.fail = 1;
+                ret.fail = true;
                 return ret;
         }
     }
