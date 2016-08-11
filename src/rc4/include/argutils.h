@@ -11,8 +11,10 @@ struct arg_struct
     char * key;
     bool fail;
     bool encrypt;
+    bool outToFile;
 };
 
+bool clean_arg_struct(struct arg_struct* as);
 
 extern char* parse_argv_to_str(int* cidx, int argc, char** argv);
 

@@ -1,12 +1,15 @@
-#include "argutils.h"
-#include "crypto.h"
+#include "include/argutils.h"
+#include "include/crypto.h"
 
 
 void encrypt(const char* message, const char* key, FILE* outFile)
 {
     char* encrypted = rc4_encrypt(message, key);
 
-    fprintf(outFile, "%s", encrypted);
+    if (outFile)
+        fprintf(outFile, "%s", encrypted);
+    else
+        printf("%s", encrypted);
 
     free(encrypted);
 }
@@ -15,11 +18,13 @@ void decrypt(const char* message, const char* key, FILE* outFile)
 {
     char* decrypted = rc4_decrypt(message, key);
 
-    fprintf(outFile, "%s", decrypted);
+    if (outFile)
+        fprintf(outFile, "%s", decrypted);
+    else
+        printf("%s", decrypted);
 
     free(decrypted);
 }
-
 
 
 
@@ -31,9 +36,10 @@ int main(int argc, char** argv)
     if (args.fail) return -1;
 
     char *key, *message, *outFile;
+    FILE * ofp;
 
 
-//Get key
+    //Get key
     if (args.key)   {
         if (strstr(args.key, ".key") != NULL || strstr(args.key, ".txt") != NULL)
             key = parse_file(args.key);
@@ -44,7 +50,7 @@ int main(int argc, char** argv)
         return -2;
     }
 
-//Get message
+    //Get message
     if (args.iFile) {
         if (strstr(args.iFile, ".txt") != NULL)
             message = parse_file(args.iFile);
@@ -56,22 +62,28 @@ int main(int argc, char** argv)
     }
 
 
-//Output file name
-    outFile = args.oFile == NULL ? "out" : args.oFile;
+    //Output method
+    if (args.outToFile){
+        outFile = args.oFile == NULL ? "out" : args.oFile;
+        ofp = fopen(outFile, "w");
 
-    FILE * ofp = fopen(outFile, "w");
+        if (ofp == NULL) { 
+            printf("Failed to open output file. Exiting..."); 
+            return -4; 
+        }
 
-    if (ofp == NULL)
-    { 
-        printf("Failed to open output file. Exiting..."); 
-        return -4; 
-    }
+    } else ofp = NULL;
 
 
-//Perform encryption
-    RC4encrypt(message, key, ofp);
+    //Use cipher
+    if (args.encrypt)
+        encrypt(message, key, ofp);
+    else
+        decrypt(message, key, ofp);
 
-//Release pointers if necessary 
+
+    //Release pointers if necessary
+    clean_arg_struct(&args);
     free(key);
     free(message);
     fclose(ofp);

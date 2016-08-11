@@ -1,5 +1,16 @@
 #include "argutils.h"
 
+
+bool clean_arg_struct(struct arg_struct* as)
+{
+    as->iFile = NULL; 
+    as->oFile = NULL;
+    as->key = NULL;
+
+    return (as->iFile || as->oFile || as->key) ? false : true;
+}
+
+
 char* parse_argv_to_str(int* cidx, int argc, char** argv)
 {
 
@@ -55,7 +66,7 @@ char* parse_file(const char* filename)
 struct arg_struct parse_args(int argc, char** argv)
 {
 
-    struct arg_struct ret = {NULL, NULL, NULL, 0};
+    struct arg_struct ret = {NULL, NULL, NULL, false, true, true};
 
     if (argc == 1) //not enough arguments
     {
@@ -76,6 +87,12 @@ struct arg_struct parse_args(int argc, char** argv)
 
         switch (argv[i][1])
         {
+            case 'h':   //output in console instead of file
+                ret.outToFile = false;
+                break;
+            case 'd':   //decrypt
+                ret.encrypt = false;
+                break;
             case 'm':   //message (.txt file or cl arg)
                 i++;
                 ret.iFile = parse_argv_to_str(&i, argc, argv);
@@ -88,7 +105,7 @@ struct arg_struct parse_args(int argc, char** argv)
                 i++;
                 ret.key = parse_argv_to_str(&i, argc, argv);
                 --i;
-                break;                
+                break;           
             default:
                 printf("Argument %d invalid, exiting...\n", i);
                 ret.fail = true;
