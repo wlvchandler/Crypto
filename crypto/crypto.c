@@ -18,7 +18,7 @@ static char*    rc4(const char* message, const char* key, bool encrypt);
 ********/
 
 /*Convert key string into an array of decimal ASCII identifiers*/
-static ushort * convert_key(const char * key, unsigned len)
+static ushort * _convert_key(const char * key, unsigned len)
 {
      unsigned short * ret = malloc(sizeof(int) * len);
 
@@ -37,7 +37,7 @@ static void _ksa(int S[256], const char* key)
     int i, j = 0;
     unsigned keylen = strlen(key);
 
-    unsigned short * keynums = convert_key(key, keylen);
+    unsigned short * keynums = _convert_key(key, keylen);
 
     for (i = 0; i < 256; ++i)
         S[i] = i;
