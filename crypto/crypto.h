@@ -20,7 +20,7 @@ ushort*  convert_key(const char * key, unsigned len);
 void     _ksa(int S[256], const char* key);
 
 // RC4 Pseudo-random generation algorithm
-int      _prga(int S[256]);
+int      _prga(int S[256], int* i, int* j);
 
 // Actual RC4 implementation
 char*    rc4(const char* message, const char* key, bool encrypt);

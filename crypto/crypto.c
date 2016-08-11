@@ -41,17 +41,14 @@ void _ksa(int S[256], const char* key)
 
 
 /*RC4 pseudo-random generation algorithm*/
-int _prga(int S[256])
+int _prga(int S[256], int* i, int* j)
 {
-    static int i = 0;
-    static int j = 0;
+    *i = (*i+1) % 256;
+    *j = (*j+S[*i]) % 256;
 
-    i = (i+1) % 256;
-    j = (j+S[i]) % 256;
+    swap(S[*i], S[*j]);
 
-    swap(S[i], S[j]);
-
-    return S[(S[i]+S[j]) % 256];    
+    return S[(S[*i]+S[*j]) % 256];    
 }
 
 
@@ -68,23 +65,26 @@ char * rc4(const char* message, const char* key, bool encrypt)
     int p_array[256] = {0};
     _ksa(p_array, key);
 
-    unsigned i; for (i = 0; i < msglen; ++i)
+
+    int y = 0, z = 0;
+
+    if (!encrypt)
     {
-        if (!encrypt)
+        char * dst = retStr;
+        char * end = retStr + retlen;
+
+        unsigned hex;
+
+        while (dst < end && sscanf(message, "%2x", &hex) == 1)
         {
-            char * dst = retStr;
-            char * end = retStr + retlen;
-
-            unsigned hex;
-
-            while (dst < end && sscanf(message, "%2x", &hex) == 1)
-            {
-                *dst++ = _prga(p_array) ^ hex;
-                message += 2;
-            }
+            *dst++ = _prga(p_array, &y, &z) ^ hex;
+            message += 2;
         }
-        else 
-            sprintf(&retStr[i*2], "%02X", message[i] ^ _prga(p_array));
+    }
+    else 
+    {
+        for (unsigned i = 0; i < msglen; ++i)
+            sprintf(&retStr[i*2], "%02X", message[i] ^ _prga(p_array, &y, &z));
     }
 
     return retStr;
