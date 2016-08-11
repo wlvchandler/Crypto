@@ -1,12 +1,24 @@
 #include "crypto.h"
 
+// convert key string to array of numbers
+static ushort*     _convert_key(const char * key, unsigned len);
+
+// RC4 Key-Scheduling algorithm
+static void        _ksa(int S[256], const char* key);
+
+// RC4 Pseudo-random generation algorithm
+static inline int  _prga(int S[256], int* i, int* j);
+
+// Actual RC4 implementation, use one of below
+static char*    rc4(const char* message, const char* key, bool encrypt);
+
 
 /*******
 * RC4
 ********/
 
 /*Convert key string into an array of decimal ASCII identifiers*/
-ushort * convert_key(const char * key, unsigned len)
+static ushort * convert_key(const char * key, unsigned len)
 {
      unsigned short * ret = malloc(sizeof(int) * len);
 
@@ -20,7 +32,7 @@ ushort * convert_key(const char * key, unsigned len)
 
 
 /*RC4 Key-scheduling algorithm*/
-void _ksa(int S[256], const char* key)
+static void _ksa(int S[256], const char* key)
 {
     int i, j = 0;
     unsigned keylen = strlen(key);
@@ -41,7 +53,7 @@ void _ksa(int S[256], const char* key)
 
 
 /*RC4 pseudo-random generation algorithm*/
-int _prga(int S[256], int* i, int* j)
+static int _prga(int S[256], int* i, int* j)
 {
     *i = (*i+1) % 256;
     *j = (*j+S[*i]) % 256;
@@ -52,40 +64,38 @@ int _prga(int S[256], int* i, int* j)
 }
 
 
-/*STATUS -- NOT WORKING*/
-char * rc4(const char* message, const char* key, bool encrypt)
+static char * rc4(const char* message, const char* key, bool encrypt)
 {
+    int p_array[256] = {0}; 
+    int y = 0, z = 0;
 
     size_t msglen = strlen(message);
     size_t retlen = encrypt ? (msglen*2) : (msglen/2);
 
     char* retStr = malloc(retlen+1);
-    retStr[retlen] = '\0';
 
-    int p_array[256] = {0};
+    //Run Key-Scheduling algorithm
     _ksa(p_array, key);
 
-
-    int y = 0, z = 0;
-
-    if (!encrypt)
-    {
+    if (!encrypt) {
         char * dst = retStr;
         char * end = retStr + retlen;
-
         unsigned hex;
 
-        while (dst < end && sscanf(message, "%2x", &hex) == 1)
-        {
+        /*Decrypt message*/
+        while (dst < end && sscanf(message, "%2x", &hex) == 1){
             *dst++ = _prga(p_array, &y, &z) ^ hex;
             message += 2;
         }
-    }
-    else 
-    {
+
+    } else {
+        /*Encrypt message*/
         for (unsigned i = 0; i < msglen; ++i)
             sprintf(&retStr[i*2], "%02X", message[i] ^ _prga(p_array, &y, &z));
+
     }
+   
+    retStr[retlen] = '\0';
 
     return retStr;
 }
@@ -93,13 +103,11 @@ char * rc4(const char* message, const char* key, bool encrypt)
 
 char* rc4_encrypt(const char* message, const char* key)
 {
-    char * encrypted = rc4(message, key, true);
-    return encrypted;
+    return rc4(message, key, true);
 }
 
 char* rc4_decrypt(const char* message, const char* key)
 {
-    char * decrypted = rc4(message, key, false);
-    return decrypted;
+    return rc4(message, key, false);
 }
 
