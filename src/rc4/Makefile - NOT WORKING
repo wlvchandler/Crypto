@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -c -Wall -Wextra -pedantic
+CFLAGS=-std=c99 -c -Wall -Wextra -Wpedantic -O3
 
 all: rc4
 
